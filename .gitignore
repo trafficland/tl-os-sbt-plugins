@@ -1,0 +1,42 @@
+# use glob syntax.
+syntax: glob
+
+# misc files
+*.log
+*.*~
+
+# building
+out
+ij-out
+ant-out
+
+# sbt
+target
+lib_managed
+src_managed
+project/boot/
+dist/
+.history
+
+
+# IntelliJ
+*.iws
+*.iml
+.idea
+
+
+# vim
+*.swp
+
+# eclipse
+.project
+.classpath
+.metadata
+.target
+.scala_dependencies
+.settings/
+bin/
+.cache
+
+# OSX
+.DS_Store

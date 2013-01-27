@@ -1,0 +1,1 @@
+addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.2-20130127-211046")
