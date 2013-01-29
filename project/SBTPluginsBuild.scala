@@ -14,7 +14,7 @@ object SBTPluginsBuild extends Build {
       organization := "com.trafficland",
       organizationName := "TrafficLand, Inc.",
       sbtPlugin := true,
-      version       := "0.6.2-SNAPSHOT".toReleaseFormat,
+      version       := "0.6.3-SNAPSHOT".toReleaseFormat,
       scalaVersion := "2.9.2",
       scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
