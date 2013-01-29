@@ -1,4 +1,4 @@
-package trafficland.sbt.plugins.versionmanagement
+package trafficland.opensource.sbt.plugins.versionmanagement
 
 object SemanticVersion {
 

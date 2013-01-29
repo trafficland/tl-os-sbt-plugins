@@ -1,4 +1,4 @@
-package trafficland.sbt.plugins.packagemanagement
+package trafficland.opensource.sbt.plugins.packagemanagement
 
 import sbt._
 import Keys._

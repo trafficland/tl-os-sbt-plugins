@@ -1,8 +1,6 @@
 import sbt._
 import Keys._
-import trafficland.sbt.plugins.versionmanagement.SemanticVersion._
-import trafficland.sbt.plugins.StandardPluginSet
-import trafficland.sbt.plugins.releasemanagement.ReleaseManagementPlugin._
+import trafficland.opensource.sbt.plugins._
 
 object SBTPluginsBuild extends Build {
 
@@ -20,7 +18,17 @@ object SBTPluginsBuild extends Build {
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
       libraryDependencies ++= Seq(
         "org.scalatest" %% "scalatest" % "1.8" % "test"
-      )
+      ),
+      publishTo <<= (version) { version: String =>
+        val tlArtifactoryServer = "http://build01.tl.com:8081/artifactory/"
+        val repositoryPath = version.isSnapshot match {
+          case true => "com.trafficland.snapshots"
+          case false => "com.trafficland.final"
+        }
+        Some(Resolver.url("Artifactory Realm", new URL(tlArtifactoryServer + repositoryPath))((Resolver.ivyStylePatterns)))
+      },
+      publishMavenStyle := false,
+      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".credentials")
     )
   )
 }

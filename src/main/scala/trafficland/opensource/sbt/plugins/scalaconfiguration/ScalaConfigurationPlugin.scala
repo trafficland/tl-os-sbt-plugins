@@ -1,4 +1,4 @@
-package trafficland.sbt.plugins.scalaconfiguration
+package trafficland.opensource.sbt.plugins.scalaconfiguration
 
 import sbt._
 import sbt.Keys._

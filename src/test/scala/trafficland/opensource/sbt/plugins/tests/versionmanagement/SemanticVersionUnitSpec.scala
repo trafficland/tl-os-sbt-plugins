@@ -1,8 +1,8 @@
-package trafficland.sbt.plugins.versionmanagement.tests
+package trafficland.opensource.sbt.plugins.tests.versionmanagement
 
 import org.scalatest.WordSpec
 import org.scalatest.matchers.ShouldMatchers
-import trafficland.sbt.plugins.versionmanagement.{InvalidSnapshotVersionFormatException, SemanticVersion}
+import trafficland.opensource.sbt.plugins.versionmanagement.{InvalidSnapshotVersionFormatException, SemanticVersion}
 
 class SemanticVersionUnitSpec extends WordSpec with ShouldMatchers {
 
@@ -47,7 +47,7 @@ class SemanticVersionUnitSpec extends WordSpec with ShouldMatchers {
 
   "toReleaseFormat" should {
 
-    import trafficland.sbt.plugins._
+    import trafficland.opensource.sbt.plugins._
 
     "return a version as a string in the snapshot release format when a version in the snapshot format is submitted." in {
       snapshotVersion.toReleaseFormat should fullyMatch regex ("""^(\d+\.){2}\d+(-\d{8}-\d{6})$""")

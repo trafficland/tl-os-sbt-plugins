@@ -1,8 +1,8 @@
-package trafficland.sbt.plugins.git
+package trafficland.opensource.sbt.plugins.git
 
 import sbt._
 import Keys._
-import trafficland.sbt.plugins._
+import trafficland.opensource.sbt.plugins._
 
 object GitPlugin extends Plugin {
 

@@ -1,4 +1,4 @@
-package trafficland.sbt.plugins.versionmanagement
+package trafficland.opensource.sbt.plugins.versionmanagement
 
 case class InvalidSnapshotVersionFormatException(originalVersion:String)
   extends Exception(("%s is not in the correct isSnapshot version format.  " +

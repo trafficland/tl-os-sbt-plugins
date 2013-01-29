@@ -1,7 +1,7 @@
-package trafficland.sbt.plugins.releasemanagement
+package trafficland.opensource.sbt.plugins.releasemanagement
 
 import sbt.SettingKey
-import trafficland.sbt.plugins._
+import trafficland.opensource.sbt.plugins._
 
 case class SnapshotRelease() extends ReleaseType() {
 
