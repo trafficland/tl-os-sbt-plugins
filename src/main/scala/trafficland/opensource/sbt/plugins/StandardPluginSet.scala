@@ -1,11 +1,11 @@
-package trafficland.sbt.plugins
+package trafficland.opensource.sbt.plugins
 
 import sbt._
-import git.GitPlugin
-import packagemanagement.PackageManagementPlugin
 import releasemanagement.ReleaseManagementPlugin
 import scalaconfiguration.ScalaConfigurationPlugin
 import versionmanagement.VersionManagementPlugin
+import trafficland.opensource.sbt.plugins.git.GitPlugin
+import trafficland.opensource.sbt.plugins.packagemanagement.PackageManagementPlugin
 
 object StandardPluginSet extends Plugin {
 

@@ -1,4 +1,4 @@
-package trafficland.sbt.plugins.play20
+package trafficland.opensource.sbt.plugins.play20
 
 import sbt._
 import sbt.Keys._

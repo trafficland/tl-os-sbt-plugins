@@ -1,4 +1,4 @@
-package trafficland.sbt
+package trafficland.opensource.sbt
 
 import plugins.versionmanagement.SemanticVersion
 

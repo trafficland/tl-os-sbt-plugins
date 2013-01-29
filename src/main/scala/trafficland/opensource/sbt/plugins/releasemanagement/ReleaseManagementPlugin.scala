@@ -1,9 +1,10 @@
-package trafficland.sbt.plugins.releasemanagement
+package trafficland.opensource.sbt.plugins.releasemanagement
 
 import sbt._
 import Keys._
-import trafficland.sbt.plugins.git.GitPlugin._
-import trafficland.sbt.plugins._
+import trafficland.opensource.sbt.plugins.git.GitPlugin
+import GitPlugin._
+import trafficland.opensource.sbt.plugins._
 
 object ReleaseManagementPlugin extends Plugin {
 

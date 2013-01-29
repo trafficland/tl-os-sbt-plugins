@@ -1,9 +1,9 @@
-package trafficland.sbt.plugins.versionmanagement
+package trafficland.opensource.sbt.plugins.versionmanagement
 
 import sbt._
 import Keys._
 import java.util.regex.Pattern
-import trafficland.sbt.plugins._
+import trafficland.opensource.sbt.plugins._
 
 object VersionManagementPlugin extends Plugin {
 

@@ -1,4 +1,4 @@
-package trafficland.sbt.plugins.releasemanagement
+package trafficland.opensource.sbt.plugins.releasemanagement
 
 import sbt.SettingKey
 

@@ -1,4 +1,4 @@
-package trafficland.sbt.plugins.git
+package trafficland.opensource.sbt.plugins.git
 
 import sbt.{ControlEvent, LogEvent, Level, BasicLogger}
 
