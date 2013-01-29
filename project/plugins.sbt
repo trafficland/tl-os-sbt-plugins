@@ -2,4 +2,4 @@ resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositori
 
 addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.3.0-SNAPSHOT")
 
-addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.3-20130129-140822")
+addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.3-20130129-161135")

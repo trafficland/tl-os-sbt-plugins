@@ -1,8 +1,6 @@
 import sbt._
 import Keys._
-import trafficland.opensource.sbt.plugins.StandardPluginSet
 import trafficland.opensource.sbt.plugins._
-import trafficland.opensource.sbt.plugins.releasemanagement.ReleaseManagementPlugin._
 
 object SBTPluginsBuild extends Build {
 

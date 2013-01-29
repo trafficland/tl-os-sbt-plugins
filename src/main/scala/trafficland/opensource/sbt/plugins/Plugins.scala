@@ -5,6 +5,7 @@ import plugins.versionmanagement.SemanticVersion
 package object plugins {
 
   implicit def toVersion(originalVersion:String) : SemanticVersion = SemanticVersion.toVersion(originalVersion)
+  val isApp = releasemanagement.ReleaseManagementPlugin.isApp
 
   val Git = git.GitPlugin
   val PackageManagement = packagemanagement.PackageManagementPlugin
