@@ -15,10 +15,13 @@ object Play20Plugin extends Plugin {
   val playPackageEverything = TaskKey[Seq[File]]("play-package-everything")
   val distDirectory = SettingKey[File]("play-dist")
   val dist = TaskKey[File]("dist", "Build the standalone application package")
-  val distTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, normalizedName, version, name) map { (dist, root, packaged, dependencies, target, id, version, name) =>
-    val packageName = id + "-" + version
-    val packageDirectory = packageName + "/" + id
+  val distTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, normalizedName, version, name, state) map { (dist, root, packaged, dependencies, target, id, version, name, stream) =>
+    val packageName = name + "-" + version
+    stream.log.info("Creating package named %s.".format(packageName))
+    val packageDirectory = name
+    stream.log.info("Writing package to %s.".format(packageDirectory))
     val zip = dist / (packageName + ".zip")
+    stream.log.info("Creating zip file %s.".format(zip.toString))
 
     IO.delete(dist)
     IO.createDirectory(dist)
@@ -43,6 +46,7 @@ object Play20Plugin extends Plugin {
 
     println()
     println(name + " has been packaged.  The package can be found at " + zip.getCanonicalPath + "!")
+    println("ready to stage")
     println()
 
     zip
