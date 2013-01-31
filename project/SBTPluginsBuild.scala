@@ -12,7 +12,7 @@ object SBTPluginsBuild extends Build {
       organization := "com.trafficland",
       organizationName := "TrafficLand, Inc.",
       sbtPlugin := true,
-      version       := "0.6.5-SNAPSHOT".toReleaseFormat,
+      version       := "0.6.4".toReleaseFormat,
       scalaVersion := "2.9.2",
       scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
@@ -20,12 +20,12 @@ object SBTPluginsBuild extends Build {
         "org.scalatest" %% "scalatest" % "1.8" % "test"
       ),
       publishTo <<= (version) { version: String =>
-        val tlArtifactoryServer = "http://build01.tl.com:8081/artifactory/"
-        val repositoryPath = version.isSnapshot match {
-          case true => "com.trafficland.snapshots"
-          case false => "com.trafficland.final"
+        val scalasbt = "http://repo.scala-sbt.org/scalasbt/"
+        val (name, url) = version.isSnapshot match {
+          case true => ("community-sbt-plugin-snapshots", scalasbt+"sbt-plugin-snapshots")
+          case false => ("community-sbt-plugin-releases", scalasbt+"sbt-plugin-releases")
         }
-        Some(Resolver.url("Artifactory Realm", new URL(tlArtifactoryServer + repositoryPath))((Resolver.ivyStylePatterns)))
+        Some(Resolver.url(name, new URL(url))(Resolver.ivyStylePatterns))
       },
       publishMavenStyle := false,
       credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".credentials")
