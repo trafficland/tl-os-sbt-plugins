@@ -65,7 +65,7 @@ object Play20Plugin extends Plugin {
       """#!/usr/bin/env sh
 scriptdir=`dirname $0`
 classpath=""" + dependencies.map { case (jar, path) => "$scriptdir/" + path }.mkString("\"", ":", "\"") + """
-exec /opt/java $* -cp $classpath """ + customConfigFilename.map(fn => "-Dconfig.file=`dirname $0`/conf/" + fn + " ").getOrElse("-Dconfig.file=`dirname $0`/conf/application.conf ") + """play.core.server.NettyServer `dirname $0`
+exec java $* -cp $classpath """ + customConfigFilename.map(fn => "-Dconfig.file=`dirname $0`/conf/" + fn + " ").getOrElse("-Dconfig.file=`dirname $0`/conf/application.conf ") + """play.core.server.NettyServer `dirname $0`
                                                                                                                                                                                 """ /* */ )
   }
 

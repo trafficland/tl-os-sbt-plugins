@@ -28,7 +28,7 @@ object SBTPluginsBuild extends Build {
         Some(Resolver.url(name, new URL(url))(Resolver.ivyStylePatterns))
       },
       publishMavenStyle := false,
-      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".credentials")
+      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".scala-sbt-credentials")
     )
   )
 }
