@@ -12,7 +12,7 @@ object SBTPluginsBuild extends Build {
       organization := "com.trafficland",
       organizationName := "TrafficLand, Inc.",
       sbtPlugin := true,
-      version       := "0.6.4".toReleaseFormat,
+      version       := "0.6.5".toReleaseFormat,
       scalaVersion := "2.9.2",
       scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
@@ -28,7 +28,7 @@ object SBTPluginsBuild extends Build {
         Some(Resolver.url(name, new URL(url))(Resolver.ivyStylePatterns))
       },
       publishMavenStyle := false,
-      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".credentials")
+      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".scala-sbt-credentials")
     )
   )
 }
