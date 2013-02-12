@@ -33,13 +33,13 @@ General Usage
 
 See http://www.scala-sbt.org/0.12.1/docs/Extending/Plugins for information on adding plugins.
 
-The plugin is not currently hosted in a public repository.  Hopefully that will be rectified soon.  In the meantime,
-clone the repository, fire up sbt and run publish-local.  Assuming publish-local completes correctly the plugin should
-be available for addition to a project using the normal addSbtPlugin semantics.
+The plugin is currently hosted by the Scala SBT repository (http://repo.scala-sbt.org/).
 
-Once you have the plugin in your local cache you'll need to add the following to your project/plugins.sbt file:
+Add the following to your project/plugins.sbt file:
 
-    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.3")
+    resolvers += Resolver.url("Artifactory Online", url("http://repo.scala-sbt.org/scalasbt/repo"))(Resolver.ivyStylePatterns)
+    
+    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.5")
 
 ## Mixing in the StandardPluginSet
 
