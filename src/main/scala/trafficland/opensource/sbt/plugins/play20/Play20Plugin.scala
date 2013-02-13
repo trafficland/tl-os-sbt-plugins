@@ -38,7 +38,7 @@ object Play20Plugin extends Plugin {
     val other = Seq((root / "README") -> (packageDirectory + "/README"))
     val productionConfigFile = customConfigFilename.map(fn => target / fn).getOrElse(target / "application.conf")
     val prodApplicationConf = getConfigFileToZipLocationMappings(customConfigFileInformation, productionConfigFile, packageDirectory)
-    val defaultApplicationConf = Seq(new File("conf/application.conf") -> (packageDirectory + "/conf/application.conf"))
+    val defaultApplicationConf = Seq(root / "conf" / "application.conf" -> (packageDirectory + "/conf/application.conf"))
 
     IO.zip(dependenciesListToZipLocationMappings.map { case (jar, path) => jar -> (packageDirectory + "/" + path) } ++ scripts ++ other ++ prodApplicationConf ++ defaultApplicationConf, zip)
     IO.delete(startScriptLocation)

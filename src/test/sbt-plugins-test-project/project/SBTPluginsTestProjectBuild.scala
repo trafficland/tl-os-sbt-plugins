@@ -1,6 +1,6 @@
 import sbt._
 import sbt.Keys._
-import trafficland.sbt.plugins._
+import trafficland.opensource.sbt.plugins._
 
 object SBTPluginsTestProjectBuild extends Build {
 
