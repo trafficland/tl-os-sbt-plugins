@@ -42,7 +42,7 @@ object Play20Plugin extends Plugin {
       (args, distDir, root, packaged, dependencies, target, startScript, javaCommand, id, version, name, stream) =>
         val customConfig = args.headOption.map(fn => file(fn))
         customConfig match {
-          case Some(_) => distribution(distDir, root, packaged, dependencies, target, None, startScript, javaCommand, id, version, name, stream)
+          case Some(_) => distribution(distDir, root, packaged, dependencies, target, customConfig, startScript, javaCommand, id, version, name, stream)
           case None => sys.error("No configuration file specified")
         }
 
