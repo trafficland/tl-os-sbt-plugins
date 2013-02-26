@@ -81,10 +81,10 @@ object Play20Plugin extends Plugin {
     IO.delete(startScriptLocation)
     IO.delete(productionConfigFile)
 
-    println()
-    println(name + " has been packaged.  The package can be found at " + zip.getCanonicalPath + "!")
-    println("ready to stage")
-    println()
+    stream.log.info("")
+    stream.log.info(name + " has been packaged.  The package can be found at " + zip.getCanonicalPath + "!")
+    stream.log.info("ready to stage")
+    stream.log.info("")
 
     zip
   }
