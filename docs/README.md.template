@@ -5,7 +5,7 @@ This project is largely based on the work done by Robey Pointer
 which can be found at https://github.com/twitter/sbt-package-dist.  Robey, if you find this repository, thank you for
 your work, inspiration and for making it easier to figure out how to bend SBT to our will.
 
-sbt-plugins is a set of plugins for SBT 0.12.1 which unites processes and tasks that TrafficLand
+sbt-plugins is a set of plugins for SBT 0.12.x which unites processes and tasks that TrafficLand
 uses daily for release and version management.  We thought
 they might be useful to others so we moved the parts that are specific to TrafficLand to a private repository
 and open sourced the rest.  
