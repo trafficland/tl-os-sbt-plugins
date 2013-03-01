@@ -12,7 +12,7 @@ object SBTPluginsBuild extends Build {
       organization := "com.trafficland",
       organizationName := "TrafficLand, Inc.",
       sbtPlugin := true,
-      version       := "0.6.7".toReleaseFormat,
+      version       := "0.6.8".toReleaseFormat,
       scalaVersion := "2.9.2",
       scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
@@ -28,7 +28,22 @@ object SBTPluginsBuild extends Build {
         Some(Resolver.url(name, new URL(url))(Resolver.ivyStylePatterns))
       },
       publishMavenStyle := false,
-      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".scala-sbt-credentials")
+      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".scala-sbt-credentials"),
+      publish <<= (publish, version, streams) map { (result, appVersion, stream) =>
+        appVersion.isSnapshot match {
+          case false => writeReadme(appVersion, stream)
+          case true => stream.log.info("This is a snapshot.  The README file does not need to be altered.")
+        }
+        result
+      }
     )
   )
+
+  def writeReadme(version:String, stream:TaskStreams) {
+    stream.log.info("Starting to write README.md.")
+    val readmeTemplate = file("./docs/README.md.template")
+    val readmeFile = file("./README.md")
+    IO.write(readmeFile, IO.read(readmeTemplate).replace("#{VERSION}", version))
+    stream.log.info("Finished writing README.md.")
+  }
 }

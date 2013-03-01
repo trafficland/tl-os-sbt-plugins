@@ -7,7 +7,7 @@ object PackageManagementPlugin extends Plugin {
 
   lazy val plug = Seq(
     artifactName := { (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
-      artifact.name + "." + artifact.extension
+      artifact.name + "-" + artifact.`type` + "." + artifact.extension
     },
     artifact in packageBin in Compile <<= (artifact in packageBin in Compile, version) apply ( (old, ver) => {
       val newName = old.name + "-" + ver
