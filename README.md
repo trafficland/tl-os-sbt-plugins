@@ -5,14 +5,14 @@ This project is largely based on the work done by Robey Pointer
 which can be found at https://github.com/twitter/sbt-package-dist.  Robey, if you find this repository, thank you for
 your work, inspiration and for making it easier to figure out how to bend SBT to our will.
 
-sbt-plugins is a set of plugins for SBT 0.12.1 which unites processes and tasks that TrafficLand
+sbt-plugins is a set of plugins for SBT 0.12.x which unites processes and tasks that TrafficLand
 uses daily for release and version management.  We thought
 they might be useful to others so we moved the parts that are specific to TrafficLand to a private repository
 and open sourced the rest.  
 
 We hope this project proves useful to others.
 
-Included in the current release (0.6.5):
+Included in the current release (0.6.8):
 
 - **Release Management** - tasks that automate the release process including changes to version numbers, publishing and
     git repository commits and pushes.
@@ -39,7 +39,7 @@ Add the following to your project/plugins.sbt file:
 
     resolvers += Resolver.url("Artifactory Online", url("http://repo.scala-sbt.org/scalasbt/repo"))(Resolver.ivyStylePatterns)
     
-    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.5")
+    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.8")
 
 ## Mixing in the StandardPluginSet
 
