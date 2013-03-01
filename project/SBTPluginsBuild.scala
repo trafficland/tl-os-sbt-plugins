@@ -28,7 +28,22 @@ object SBTPluginsBuild extends Build {
         Some(Resolver.url(name, new URL(url))(Resolver.ivyStylePatterns))
       },
       publishMavenStyle := false,
-      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".scala-sbt-credentials")
+      credentials += Credentials(Path.userHome / ".ivy2" / "tlcredentials" / ".scala-sbt-credentials"),
+      publish <<= (publish, version, streams) map { (result, appVersion, stream) =>
+        appVersion.isSnapshot match {
+          case false => writeReadme(appVersion, stream)
+          case true => stream.log.info("This is a snapshot.  The README file does not need to be altered.")
+        }
+        result
+      }
     )
   )
+
+  def writeReadme(version:String, stream:TaskStreams) {
+    stream.log.info("Starting to write README.md.")
+    val readmeTemplate = file("./docs/README.md.template")
+    val readmeFile = file("./README.md")
+    IO.write(readmeFile, IO.read(readmeTemplate).replace("#{VERSION}", version))
+    stream.log.info("Finished writing README.md.")
+  }
 }
