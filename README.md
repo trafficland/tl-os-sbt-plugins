@@ -12,7 +12,7 @@ and open sourced the rest.
 
 We hope this project proves useful to others.
 
-Included in the current release (0.6.12):
+Included in the current release (0.6.9):
 
 - **Release Management** - tasks that automate the release process including changes to version numbers, publishing and
     git repository commits and pushes.
@@ -39,7 +39,7 @@ Add the following to your project/plugins.sbt file:
 
     resolvers += Resolver.url("Artifactory Online", url("http://repo.scala-sbt.org/scalasbt/repo"))(Resolver.ivyStylePatterns)
     
-    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.8")
+    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.6.9")
 
 ## Mixing in the StandardPluginSet
 
