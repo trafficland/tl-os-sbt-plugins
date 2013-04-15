@@ -12,7 +12,7 @@ and open sourced the rest.
 
 We hope this project proves useful to others.
 
-Included in the current release (0.6.8):
+Included in the current release (0.6.12):
 
 - **Release Management** - tasks that automate the release process including changes to version numbers, publishing and
     git repository commits and pushes.
