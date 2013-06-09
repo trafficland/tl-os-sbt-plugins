@@ -21,6 +21,7 @@ object ReleaseManagementPlugin extends Plugin {
 
     releaseReady <<= (gitIsCleanWorkingTree, version, libraryDependencies, streams) map { (isClean, ver, deps, stream) =>
       val stableVersion = ver.stripSnapshot.toReleaseFormat()
+      stream.log.info("stable version %s".format(stableVersion))
       val tags = ("git tag -l %s".format(stableVersion) !!).trim
 
       // we don't release dirty trees
@@ -61,6 +62,7 @@ object ReleaseManagementPlugin extends Plugin {
   ) (release(FinalRelease()))
 
   def release(releaseType:ReleaseType) : (State) => State = { (state: State) =>
+    state.log.info(releaseType.toString)
     val extracted = Project.extract(state)
 
     releaseType.isValidReleaseVersion(extracted.get(version)) match {
