@@ -1,5 +1,6 @@
 package trafficland.opensource.sbt.plugins.git
 
+
 import sbt._
 import Keys._
 import trafficland.opensource.sbt.plugins._
@@ -28,7 +29,7 @@ object GitPlugin extends Plugin {
     },
 
     gitIsCleanWorkingTree <<= (gitStatus, streams) map  { (status, stream) =>
-      status.contains("nothing to commit (working directory clean)") match {
+      status.contains("nothing to commit, working directory clean") match {
         case true => {
           stream.log.info("Working tree is clean.")
           true
@@ -115,7 +116,22 @@ object GitPlugin extends Plugin {
     },
 
     aggregate in gitReleaseCommit := false,
-    aggregate in gitTag := false
+    aggregate in gitTag := false,
+
+    gitCheckoutMaster <<= streams map { stream =>
+      stream.log.info("Checking out master.")
+      ("git checkout master").run(false).exitValue
+    },
+
+    gitCheckoutDevelop <<= streams map { stream =>
+      stream.log.info("Checking out develop.")
+      ("git checkout develop").run(false).exitValue
+    },
+
+    gitMergeDevelop <<= streams map { stream =>
+      stream.log.info("Merging develop into master.")
+      ("git merge develop").run(false).exitValue
+    }
   )
 
   val gitIsRepository = TaskKey[Boolean](
@@ -192,6 +208,21 @@ object GitPlugin extends Plugin {
   val gitPushOriginTags = TaskKey[Unit](
     "git-push-origin-tags",
     "pushes all tags to the remote repository."
+  )
+
+  val gitCheckoutMaster = TaskKey[Unit](
+    "git-checkout-master",
+    "Checkout the master branch.  This is usually used for doing a release."
+  )
+
+  val gitCheckoutDevelop = TaskKey[Unit](
+    "git-checkout-develop",
+    "Checkout the develop branch.  This is usually used for doing a release."
+  )
+
+  val gitMergeDevelop = TaskKey[Unit](
+    "git-merge-develop",
+    "Merge the develop branch into the current branch."
   )
 
   def runGitCommit(commitMessage:String) : Int = {

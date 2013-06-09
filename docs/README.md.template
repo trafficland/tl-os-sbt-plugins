@@ -12,20 +12,6 @@ and open sourced the rest.
 
 We hope this project proves useful to others.
 
-Included in the current release (#{VERSION}):
-
-- **Release Management** - tasks that automate the release process including changes to version numbers, publishing and
-    git repository commits and pushes.
-- **Play Framework 2.0** - common tasks we use in the distribution of Play applications including a custom dist task that
-    packages our applications with the correct files using our naming conventions.
-- **Git** - adds common git commands.  This plugin supports a lot of the release
-    management tasks but can be used at the SBT console with the SBT format.
-- **Package Management** - configures the naming of our artifacts in a administratively friendly way.
-- **Scala Configuration** - sets defaults for the Scala compiler.
-- **Version Management** - adds tasks for changing the project version which can be used manually but exist in support of
-    the release management plugin.
-- **Standard Plugin Set** - a convenient way to add the most commonly used plugins to a project.
-
 General Usage
 =============
 
@@ -182,12 +168,16 @@ The release tasks are as follows:
       "release-ready",
       "version-to-stable",
       "git-release-commit",
+      "git-checkout-master",
+      "git-merge-develop",
       "git-tag",
+      "git-push-origin",
+      "git-push-origin-tags",
+      "git-checkout-develop",
       "version-bump-patch",
       "version-to-snapshot",
       "git-version-bump-commit",
-      "git-push-origin",
-      "git-push-origin-tags"
+      "git-push-origin"
     )
 
 
@@ -209,12 +199,16 @@ The release tasks are as follows:
       "publish-local",
       "publish",
       "git-release-commit",
+      "git-checkout-master",
+      "git-merge-develop",
       "git-tag",
+      "git-push-origin",
+      "git-push-origin-tags",
+      "git-checkout-develop",
       "version-bump-patch",
       "version-to-snapshot",
       "git-version-bump-commit",
-      "git-push-origin",
-      "git-push-origin-tags"
+      "git-push-origin"
     )
 
 This makes producing a release very easy.

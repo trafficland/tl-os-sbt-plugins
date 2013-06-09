@@ -10,11 +10,13 @@ object Play20Plugin extends Plugin {
     stageConfigFile <<= (baseDirectory) { (baseDir) => Some(baseDir / "conf" / "stage.conf") },
     startScriptName := "start",
     startScriptJavaCommand := "java",
+    startScriptJavaOptions := None,
+    appInfoPackage := "controllers",
     dist <<= distTask,
     distStage <<= distStageTask,
     distCustom <<= distCustomTask,
-    sourceGenerators in Compile <+= (sourceManaged in Compile, name, version, organizationName) map { (outDir, appName, appVersion, orgName) =>
-      writeVersion(outDir, appName, appVersion, orgName)
+    sourceGenerators in Compile <+= (sourceManaged in Compile, name, version, organizationName, appInfoPackage) map { (outDir, appName, appVersion, orgName, appInfoPkg) =>
+      writeVersion(outDir, appName, appVersion, orgName, appInfoPkg)
     }
   )
 
@@ -22,37 +24,38 @@ object Play20Plugin extends Plugin {
   val distDirectory = SettingKey[File]("play-dist")
   val startScriptName = SettingKey[String]("start-script")
   val startScriptJavaCommand = SettingKey[String]("start-script-java-command")
+  val startScriptJavaOptions = SettingKey[Option[String]]("start-script-java-options")
   val productionConfigFile = SettingKey[Option[File]]("production-config")
   val stageConfigFile = SettingKey[Option[File]]("stage-config")
+  val appInfoPackage = SettingKey[String]("app-info-package")
   val dist = TaskKey[File]("dist", "Build the standalone production application package")
   val distStage = TaskKey[File]("dist-stage", "Build the standalone staging application package")
   val distCustom = InputKey[File]("dist-custom", "Build the standalone application package with custom configuration file")
-  val distTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, productionConfigFile, startScriptName, startScriptJavaCommand, normalizedName, version, name, state).map {
-    (distDir, root, packaged, dependencies, target, productionConfig, startScript, javaCommand, id, version, name, stream) =>
-      distribution(distDir, root, packaged, dependencies, target, productionConfig, startScript, javaCommand, id, version, name, stream)
+  val distTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, productionConfigFile, startScriptName, startScriptJavaCommand, startScriptJavaOptions, normalizedName, version, name, state).map {
+    (distDir, root, packaged, dependencies, target, productionConfig, startScript, javaCommand, javaOpts, id, version, name, stream) =>
+      distribution(distDir, root, packaged, dependencies, target, productionConfig, startScript, javaCommand, javaOpts, id, version, name, stream)
   }
 
-  val distStageTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, stageConfigFile, startScriptName, startScriptJavaCommand, normalizedName, version, name, state).map {
-    (distDir, root, packaged, dependencies, target, stageConfig, startScript, javaCommand, id, version, name, stream) =>
-      distribution(distDir, root, packaged, dependencies, target, stageConfig, startScript, javaCommand, id, version, name, stream)
+  val distStageTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, stageConfigFile, startScriptName, startScriptJavaCommand, startScriptJavaOptions, normalizedName, version, name, state).map {
+    (distDir, root, packaged, dependencies, target, stageConfig, startScript, javaCommand, javaOpts, id, version, name, stream) =>
+      distribution(distDir, root, packaged, dependencies, target, stageConfig, startScript, javaCommand, javaOpts, id, version, name, stream)
   }
 
   val distCustomTask = inputTask { argsTask =>
-    (argsTask, distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, startScriptName, startScriptJavaCommand, normalizedName, version, name, state).map {
-      (args, distDir, root, packaged, dependencies, target, startScript, javaCommand, id, version, name, stream) =>
+    (argsTask, distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, startScriptName, startScriptJavaCommand, startScriptJavaOptions, normalizedName, version, name, state).map {
+      (args, distDir, root, packaged, dependencies, target, startScript, javaCommand, javaOpts, id, version, name, stream) =>
         val customConfig = args.headOption.map(fn => file(fn))
         customConfig match {
-          case Some(_) => distribution(distDir, root, packaged, dependencies, target, customConfig, startScript, javaCommand, id, version, name, stream)
+          case Some(_) => distribution(distDir, root, packaged, dependencies, target, customConfig, startScript, javaCommand, javaOpts, id, version, name, stream)
           case None => sys.error("No configuration file specified")
         }
-
     }
   }
 
   def distribution(distDir: File, root: File,
                    packaged: Seq[File], dependencies: Id[Keys.Classpath],
                    target: File, customConfig: Option[File], start: String,
-                   jCommand: String, id: String, version: String,
+                   jCommand: String, jOpts: Option[String], id: String, version: String,
                    name: String, stream: State) = {
 
     val packageName = name + "-" + version
@@ -69,7 +72,7 @@ object Play20Plugin extends Plugin {
     val startScriptLocation = target / start
     val customConfigFilename = customConfig.map(f => Some(f.getName)).getOrElse(None)
 
-    writeStartScript(startScriptLocation, dependenciesListToZipLocationMappings, customConfigFilename, jCommand)
+    writeStartScript(startScriptLocation, dependenciesListToZipLocationMappings, customConfigFilename, jCommand, jOpts)
 
     val scripts = Seq(startScriptLocation -> (packageDirectory + "/" + start))
     val other = Seq((root / "README") -> (packageDirectory + "/README"))
@@ -96,13 +99,13 @@ object Play20Plugin extends Plugin {
     }.getOrElse(Nil)
   }
 
-  def writeStartScript(scriptLocation:File, dependencies:Seq[(File, String)], customConfigFilename:Option[String], javaCommand: String) {
+  def writeStartScript(scriptLocation:File, dependencies:Seq[(File, String)], customConfigFilename:Option[String], javaCommand: String, javaOptions: Option[String]) {
     IO.write(scriptLocation,
       """#!/usr/bin/env sh
 scriptdir=`dirname $0`
 classpath=""" + dependencies.map { case (jar, path) => "$scriptdir/" + path }.mkString("\"", ":", "\"") + """
-exec """ + javaCommand + """ $* -cp $classpath """ + customConfigFilename.map(fn => "-Dconfig.file=`dirname $0`/conf/" + fn + " ").getOrElse("-Dconfig.file=`dirname $0`/conf/application.conf ") + """play.core.server.NettyServer `dirname $0`
-                                                                                                                                                                                """ /* */ )
+exec """ + javaCommand + """ $* -cp $classpath """ + javaOptions.map(opts => opts + " ").getOrElse("")  + customConfigFilename.map(fn => "-Dconfig.file=`dirname $0`/conf/" + fn + " ").getOrElse("-Dconfig.file=`dirname $0`/conf/application.conf ") + """play.core.server.NettyServer `dirname $0`
+                                                                                                                                                                                                                                                         """ /* */ )
   }
 
   def getDependencyToZipLocationMappings(dependencies:Id[Keys.Classpath]) : Seq[(File, String)] = dependencies.filter(_.data.ext == "jar").map { dependency =>
@@ -116,15 +119,15 @@ exec """ + javaCommand + """ $* -cp $classpath """ + customConfigFilename.map(fn
     dependency.data -> path
   }
 
-  def writeVersion(outDir: File, appName:String, appVersion:String, organizationName:String) = {
+  def writeVersion(outDir: File, appName:String, appVersion:String, organizationName:String, appInfoPackage: String) = {
     val file = outDir / "AppInfo.scala"
     IO.write(file,
-      """package controllers
-object AppInfo {
+      """package %s
+class AppInfo {
   val version = "%s"
   val name = "%s"
   val vendor = "%s"
-}""".format(appVersion, appName, organizationName))
+}""".format(appInfoPackage, appVersion, appName, organizationName))
     Seq(file)
   }
 }
