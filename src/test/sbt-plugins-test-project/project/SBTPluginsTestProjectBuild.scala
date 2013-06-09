@@ -4,7 +4,7 @@ import trafficland.opensource.sbt.plugins._
 
 object SBTPluginsTestProjectBuild extends Build {
 
-  val appVersion = "4.1.1-SNAPSHOT".toReleaseFormat
+  val appVersion = "4.1.2-SNAPSHOT".toReleaseFormat
   val appName = "sbt-plugins-test-project"
 
   lazy val root = Project(id = appName, base = file("."), settings =
