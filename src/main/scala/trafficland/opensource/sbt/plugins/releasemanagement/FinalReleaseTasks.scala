@@ -15,12 +15,16 @@ object FinalReleaseTasks {
     "publish-local",
     "publish",
     "git-release-commit",
+    "git-checkout-master",
+    "git-merge-develop",
     "git-tag",
+    "git-push-origin",
+    "git-push-origin-tags",
+    "git-checkout-develop",
     "version-bump-patch",
     "version-to-snapshot",
     "git-version-bump-commit",
-    "git-push-origin",
-    "git-push-origin-tags"
+    "git-push-origin"
   )
 
   lazy val releaseAppFinalSettingKey = SettingKey[Seq[String]] (
@@ -32,12 +36,17 @@ object FinalReleaseTasks {
     "release-ready",
     "version-to-stable",
     "git-release-commit",
+    "git-checkout-master",
+    "git-merge-develop",
     "git-tag",
+    "git-push-origin",
+    "git-push-origin-tags",
+    "git-checkout-develop",
     "version-bump-patch",
     "version-to-snapshot",
     "git-version-bump-commit",
-    "git-push-origin",
-    "git-push-origin-tags"
+    "git-push-origin"
   )
 
 }
+

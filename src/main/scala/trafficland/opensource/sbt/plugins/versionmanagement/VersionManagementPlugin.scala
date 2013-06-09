@@ -62,15 +62,21 @@ object VersionManagementPlugin extends Plugin {
     val buildBaseDirectory = extractedState.get(Keys.baseDirectory)
     val versionRegexes = extractedState.get(VersionManagementPlugin.versionSettingRegexes)
     val originalVersion = extractedState.get(Keys.version)
+    state.log.info("original version: %s".format(originalVersion))
     versionTransform(originalVersion) match {
       case Some(to) => {
+        state.log.info("transformed version: %s".format(to))
         val files = (PathFinder(buildBaseDirectory / "project") ** "*.scala").get ++
+          (PathFinder(buildBaseDirectory / ".." / "project") ** "*.scala").get ++
           Seq((buildBaseDirectory / "build.sbt")) ++
           Seq((buildBaseDirectory / ".." / "build.sbt"))
         val matchers = versionRegexes.map(Pattern.compile(_))
+        state.log.info("Base directory: %s".format(buildBaseDirectory.absolutePath))
+        state.log.info("Searching for version in %d potential build script locations".format(files.length))
+        state.log.info(files.map(_.absolutePath).toString())
         files.filter(_.exists).headOption.foreach { f =>
           state.log.info("Setting version %s in file %s".format(to, f))
-          writeNewVersion(f, matchers, originalVersion, to)
+          writeNewVersion(state, f, matchers, originalVersion, to)
         }
       }
       case _ => {
@@ -80,7 +86,8 @@ object VersionManagementPlugin extends Plugin {
     State.stateOps(state).reload
   }
 
-  def writeNewVersion(f: File, matchers: Seq[Pattern], from: SemanticVersion, to: SemanticVersion) {
+  def writeNewVersion(state: State, f: File, matchers: Seq[Pattern], from: SemanticVersion, to: SemanticVersion) {
+    state.log.info("Writing version %s".format(to))
     var shouldWrite = false
     val newLines = IO.reader(f) { reader =>
       IO.foldLines(reader, Seq[String]()) { (lines, line) =>
@@ -100,3 +107,4 @@ object VersionManagementPlugin extends Plugin {
     }
   }
 }
+
