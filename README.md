@@ -25,7 +25,7 @@ Add the following to your project/plugins.sbt file:
 
     resolvers += Resolver.url("Artifactory Online", url("http://repo.scala-sbt.org/scalasbt/repo"))(Resolver.ivyStylePatterns)
     
-    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.7.0")
+    addSbtPlugin("com.trafficland" % "sbt-plugins" % "0.7.1")
 
 ## Mixing in the StandardPluginSet
 
