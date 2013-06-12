@@ -1,32 +1,44 @@
 package trafficland.opensource.sbt.plugins.versionmanagement
 
-object SemanticVersion {
+import SemanticVersionConstants._
 
-  def stripSnapshot(originalVersion:String) = {
-    if (!isValidSnapshotVersionFormat(originalVersion)) throw InvalidSnapshotVersionFormatException(originalVersion)
+object SemanticVersionConstants {
 
-    originalVersion endsWith ("-SNAPSHOT") match {
-      case false => originalVersion.replaceAll("""(-\d{8}-\d{6})""", "")
-      case true => originalVersion.replaceAll("-SNAPSHOT", "")
-    }
+  lazy val SNAPSHOT = "SNAPSHOT"
+  lazy val HYPHENSNAPSHOT = "-%s".format(SNAPSHOT)
+
+}
+
+trait Snapshotable {
+
+  def isSnapshot(version:String) = {
+    version.matches("""^(\d+\.){2}\d+(-\d{8}-\d{6})$""") ||
+      version.matches("""^(\d+\.){2}\d+(%s)$""".format(HYPHENSNAPSHOT))
   }
 
-  def isSnapshot(version:String) = isValidSnapshotVersionFormat(version)
+}
 
-  def isValidSnapshotVersionFormat(version:String) = {
-    version.matches("""^(\d+\.){2}\d+(-\d{8}-\d{6})$""") ||
-      version.matches("""^(\d+\.){2}\d+(-SNAPSHOT)$""")
+object SemanticVersion extends Snapshotable {
+
+  def stripSnapshot(originalVersion:String) = {
+    if (!isSnapshot(originalVersion)) throw InvalidSnapshotVersionFormatException(originalVersion)
+
+    originalVersion endsWith (HYPHENSNAPSHOT) match {
+      case false => originalVersion.replaceAll("""(-\d{8}-\d{6})""", "")
+      case true => originalVersion.replaceAll(HYPHENSNAPSHOT, "")
+    }
   }
 
   def toVersion(originalVersion:String) : SemanticVersion = {
     isSnapshot(originalVersion) match {
       case true => {
-        stripSnapshot(originalVersion).split("\\.") match {
+        originalVersion.split("\\.") match {
           case Array(major, minor, patch) => {
+            val patchAndSnapshot = patch.split("-", 2)
             SemanticVersion(Integer.parseInt(major),
               Integer.parseInt(minor),
-              Integer.parseInt(patch),
-              true
+              Integer.parseInt(patchAndSnapshot(0)),
+              patchAndSnapshot(1)
             )
           }
         }
@@ -37,7 +49,7 @@ object SemanticVersion {
             SemanticVersion(Integer.parseInt(major),
               Integer.parseInt(minor),
               Integer.parseInt(patch),
-              false
+              ""
             )
           }
         }
@@ -46,7 +58,7 @@ object SemanticVersion {
   }
 }
 
-case class SemanticVersion(major: Int, minor: Int, patch: Int, isSnapshot: Boolean) {
+case class SemanticVersion(major: Int, minor: Int, patch: Int, snapshot:String = SNAPSHOT) extends Snapshotable {
 
   def incPatch() = Some(copy(patch = patch + 1))
 
@@ -54,29 +66,36 @@ case class SemanticVersion(major: Int, minor: Int, patch: Int, isSnapshot: Boole
 
   def incMajor() = Some(copy(major = major + 1, minor = 0, patch = 0))
 
-  def stripSnapshot() = {
-    copy(isSnapshot = false)
+  def toFinal() = {
+    copy(snapshot = "")
   }
 
-  def toSnapshot() = copy(isSnapshot = true)
+  def toSnapshot() = copy(snapshot = SNAPSHOT)
 
   override def toString() = {
     val versionAsString = "%s.%s.%s".format(major, minor, patch)
-    isSnapshot match {
-      case true => versionAsString + "-SNAPSHOT"
-      case false => versionAsString
+    snapshot.isEmpty match {
+      case true => versionAsString
+      case false => versionAsString + HYPHENSNAPSHOT
     }
   }
 
   def toReleaseFormat() = {
     isSnapshot match {
       case true => {
-        import java.{util => ju}
-        val sf = new java.text.SimpleDateFormat("yyyyMMdd-HHmmss")
-        sf.setTimeZone(ju.TimeZone.getTimeZone("UTC"))
-        "%s.%s.%s-%s".format(major, minor, patch, sf.format(new ju.Date()))
+        snapshot == SNAPSHOT match {
+          case true => {
+            import java.{util => ju}
+            val sf = new java.text.SimpleDateFormat("yyyyMMdd-HHmmss")
+            sf.setTimeZone(ju.TimeZone.getTimeZone("UTC"))
+            "%s.%s.%s-%s".format(major, minor, patch, sf.format(new ju.Date()))
+          }
+          case false => "%s.%s.%s-%s".format(major, minor, patch, snapshot)
+        }
       }
       case false => toString
     }
   }
+
+  def isSnapshot : Boolean = isSnapshot(this.toString())
 }

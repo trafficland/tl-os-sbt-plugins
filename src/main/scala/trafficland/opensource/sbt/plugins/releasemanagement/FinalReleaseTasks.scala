@@ -11,7 +11,7 @@ object FinalReleaseTasks {
 
   lazy val releasePublishLibFinalTasks = releasePublishLibFinalSettingKey := Seq(
     "release-ready",
-    "version-to-stable",
+    "version-to-final",
     "publish-local",
     "publish",
     "git-release-commit",
@@ -34,7 +34,7 @@ object FinalReleaseTasks {
 
   lazy val releaseAppFinalTasks = releaseAppFinalSettingKey := Seq(
     "release-ready",
-    "version-to-stable",
+    "version-to-final",
     "git-release-commit",
     "git-checkout-master",
     "git-merge-develop",
