@@ -123,7 +123,8 @@ exec """ + javaCommand + """ $* -cp $classpath """ + javaOptions.map(opts => opt
     val file = outDir / "AppInfo.scala"
     IO.write(file,
       """package %s
-class AppInfo {
+
+object AppInfo {
   val version = "%s"
   val name = "%s"
   val vendor = "%s"
