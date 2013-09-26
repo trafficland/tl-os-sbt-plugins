@@ -13,8 +13,11 @@ object SnapshotReleaseTasks {
     "release-ready",
     "publish-local",
     "publish",
+    "version-write-snapshot-release",
     "git-release-commit",
     "git-tag",
+    "version-to-snapshot",
+    "git-version-bump-commit",
     "git-push-origin",
     "git-push-origin-tags"
   )
@@ -26,8 +29,11 @@ object SnapshotReleaseTasks {
 
   lazy val releaseAppSnapshotTasks = releaseAppSnapshotSettingKey := Seq(
     "release-ready",
+    "version-write-snapshot-release",
     "git-release-commit",
     "git-tag",
+    "version-to-snapshot",
+    "git-version-bump-commit",
     "git-push-origin",
     "git-push-origin-tags"
   )

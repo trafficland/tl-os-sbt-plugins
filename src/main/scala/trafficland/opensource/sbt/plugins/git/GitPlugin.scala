@@ -50,8 +50,8 @@ object GitPlugin extends Plugin {
     },
 
     gitShowTags <<= (version, streams) map { (ver, stream) =>
-      val stableVersion = ver.stripSnapshot.toReleaseFormat()
-      val tags = ("git tag -l %s".format(stableVersion) !!).trim
+      val finalVersion = ver.toFinal.toReleaseFormat()
+      val tags = ("git tag -l %s".format(finalVersion) !!).trim
       stream.log.info(tags)
       tags
     },

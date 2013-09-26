@@ -8,39 +8,39 @@ class SemanticVersionUnitSpec extends WordSpec with ShouldMatchers {
 
   protected val snapshotVersion = "0.0.1-SNAPSHOT"
   protected val snapshotReleaseVersion = "0.0.1-01082013-654321"
-  protected val releaseVersion = "0.0.1"
+  protected val finalVersion = "0.0.1"
 
-  "stripSnapshot" should {
+  "toFinal" should {
 
     "strip -SNAPSHOT from the version property." in {
       val strippedVersion = SemanticVersion.stripSnapshot(snapshotVersion)
 
-      strippedVersion should be ("0.0.1")
+      strippedVersion should be (finalVersion)
     }
 
     "strip -01082013-654321 from the version property." in {
       val strippedVersion = SemanticVersion.stripSnapshot(snapshotReleaseVersion)
 
-      strippedVersion should be ("0.0.1")
+      strippedVersion should be (finalVersion)
     }
 
     "throw InvalidSnapshotVersionFormatException for release versions." in {
-      evaluating { SemanticVersion.stripSnapshot(releaseVersion) } should produce [InvalidSnapshotVersionFormatException]
+      evaluating { SemanticVersion.stripSnapshot(finalVersion) } should produce [InvalidSnapshotVersionFormatException]
     }
   }
 
-  "isValidSnapshotVersionFormat" should {
+  "isSnapshot" should {
 
     "return true for -SNAPSHOT formatted versions." in {
-      SemanticVersion.isValidSnapshotVersionFormat(snapshotVersion) should be (true)
+      SemanticVersion.isSnapshot(snapshotVersion) should be (true)
     }
 
     "return true for -yyyyMMdd-HHmmss formatted versions." in {
-      SemanticVersion.isValidSnapshotVersionFormat(snapshotReleaseVersion) should be (true)
+      SemanticVersion.isSnapshot(snapshotReleaseVersion) should be (true)
     }
 
     "return false for release versions." in {
-      SemanticVersion.isValidSnapshotVersionFormat(releaseVersion) should be (false)
+      SemanticVersion.isSnapshot(finalVersion) should be (false)
     }
 
   }
@@ -57,23 +57,61 @@ class SemanticVersionUnitSpec extends WordSpec with ShouldMatchers {
       snapshotReleaseVersion.toReleaseFormat should fullyMatch regex ("""^(\d+\.){2}\d+(-\d{8}-\d{6})$""")
     }
 
-    "not return the same snapshot release version when a snapshot release version is submitted." in {
-      val newSnapshotReleaseVersion = snapshotReleaseVersion.toReleaseFormat
-
-      newSnapshotReleaseVersion should not equal(snapshotReleaseVersion)
-    }
-
     "return a version in relase format when a release version is submitted." in {
-      releaseVersion.toReleaseFormat should fullyMatch regex ("""^(\d+\.){2}\d+$""")
+      finalVersion.toReleaseFormat should fullyMatch regex ("""^(\d+\.){2}\d+$""")
     }
 
     "return the same release version when a release version is submitted." in {
-      val newReleaseVersion = releaseVersion.toReleaseFormat
+      val newReleaseVersion = finalVersion.toReleaseFormat
 
-      newReleaseVersion should equal(releaseVersion)
+      newReleaseVersion should equal(finalVersion)
+    }
+
+    "return the same snapshot release version when a snapshot release version is submitted." in {
+      val newSnapshotReleaseVersion = snapshotReleaseVersion.toReleaseFormat
+
+      newSnapshotReleaseVersion should equal(snapshotReleaseVersion)
     }
 
   }
 
+  "toSnapshot" should {
+
+    import trafficland.opensource.sbt.plugins._
+
+    "return the snapshotted version of a release version." in {
+      val snapshottedVersion = finalVersion.toSnapshot()
+
+      snapshottedVersion.toString should equal(snapshotVersion)
+    }
+  }
+
+  "toFinal" should {
+
+    import trafficland.opensource.sbt.plugins._
+
+    "return a SemanticVersion that returns the correctly formatted string when toString is called." in {
+      val newFinalVersion = snapshotVersion.toFinal()
+
+      newFinalVersion.toString() should equal(finalVersion)
+    }
+  }
+
+  "toString" should {
+
+    import trafficland.opensource.sbt.plugins._
+
+    "return the version with the SNAPSHOT suffix when the version is a default snapshot version." in {
+      val snapshotSemanticVersion : SemanticVersion = snapshotVersion
+
+      snapshotSemanticVersion.toString should equal(snapshotVersion)
+    }
+
+    "return the version with the SNAPSHOT suffix when the version is a release snapshot version." in {
+      val snapshotSemanticVersion : SemanticVersion = snapshotReleaseVersion
+
+      snapshotSemanticVersion.toString should equal(snapshotVersion)
+    }
+  }
 
 }

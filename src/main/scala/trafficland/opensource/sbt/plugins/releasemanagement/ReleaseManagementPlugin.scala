@@ -20,9 +20,9 @@ object ReleaseManagementPlugin extends Plugin {
     SnapshotReleaseTasks.releaseAppSnapshotTasks,
 
     releaseReady <<= (gitIsCleanWorkingTree, version, libraryDependencies, streams) map { (isClean, ver, deps, stream) =>
-      val stableVersion = ver.stripSnapshot.toReleaseFormat()
-      stream.log.info("stable version %s".format(stableVersion))
-      val tags = ("git tag -l %s".format(stableVersion) !!).trim
+      val finalVersion = ver.toFinal.toReleaseFormat()
+      stream.log.info("stable version %s".format(finalVersion))
+      val tags = ("git tag -l %s".format(finalVersion) !!).trim
 
       // we don't release dirty trees
       if (!isClean) {
@@ -30,8 +30,8 @@ object ReleaseManagementPlugin extends Plugin {
         false
       }
       // we don't double-release
-      else if (tags.contains(stableVersion)) {
-        stream.log.error("Cannot tag release version %s: tag already exists.".format(stableVersion))
+      else if (tags.contains(finalVersion)) {
+        stream.log.error("Cannot tag release version %s: tag already exists.".format(finalVersion))
         false
       } else {
         stream.log.info("Current project is ok for release.")
