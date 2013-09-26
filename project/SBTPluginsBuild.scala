@@ -12,7 +12,7 @@ object SBTPluginsBuild extends Build {
       organization := "com.trafficland",
       organizationName := "TrafficLand, Inc.",
       sbtPlugin := true,
-      version       := "0.8.0".toReleaseFormat,
+      version       := "0.8.1-SNAPSHOT".toReleaseFormat,
       scalaVersion := "2.9.2",
       scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
