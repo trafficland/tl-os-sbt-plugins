@@ -1,10 +1,9 @@
 package trafficland.opensource.sbt.plugins.tests.versionmanagement
 
-import org.scalatest.WordSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.{Matchers, WordSpec}
 import trafficland.opensource.sbt.plugins.versionmanagement.{InvalidSnapshotVersionFormatException, SemanticVersion}
 
-class SemanticVersionUnitSpec extends WordSpec with ShouldMatchers {
+class SemanticVersionUnitSpec extends WordSpec with Matchers {
 
   protected val snapshotVersion = "0.0.1-SNAPSHOT"
   protected val snapshotReleaseVersion = "0.0.1-01082013-654321"
@@ -50,25 +49,25 @@ class SemanticVersionUnitSpec extends WordSpec with ShouldMatchers {
     import trafficland.opensource.sbt.plugins._
 
     "return a version as a string in the snapshot release format when a version in the snapshot format is submitted." in {
-      snapshotVersion.toReleaseFormat should fullyMatch regex ("""^(\d+\.){2}\d+(-\d{8}-\d{6})$""")
+      snapshotVersion.toReleaseFormat should fullyMatch regex """^(\d+\.){2}\d+(-\d{8}-\d{6})$"""
     }
 
     "return a version as a string in the snapshot release format when a version in the snapshot release format is submitted." in {
-      snapshotReleaseVersion.toReleaseFormat should fullyMatch regex ("""^(\d+\.){2}\d+(-\d{8}-\d{6})$""")
+      snapshotReleaseVersion.toReleaseFormat should fullyMatch regex """^(\d+\.){2}\d+(-\d{8}-\d{6})$"""
     }
 
-    "return a version in relase format when a release version is submitted." in {
-      finalVersion.toReleaseFormat should fullyMatch regex ("""^(\d+\.){2}\d+$""")
+    "return a version in release format when a release version is submitted." in {
+      finalVersion.toReleaseFormat should fullyMatch regex """^(\d+\.){2}\d+$"""
     }
 
     "return the same release version when a release version is submitted." in {
-      val newReleaseVersion = finalVersion.toReleaseFormat
+      val newReleaseVersion = finalVersion.toReleaseFormat()
 
       newReleaseVersion should equal(finalVersion)
     }
 
     "return the same snapshot release version when a snapshot release version is submitted." in {
-      val newSnapshotReleaseVersion = snapshotReleaseVersion.toReleaseFormat
+      val newSnapshotReleaseVersion = snapshotReleaseVersion.toReleaseFormat()
 
       newSnapshotReleaseVersion should equal(snapshotReleaseVersion)
     }
@@ -79,10 +78,10 @@ class SemanticVersionUnitSpec extends WordSpec with ShouldMatchers {
 
     import trafficland.opensource.sbt.plugins._
 
-    "return the snapshotted version of a release version." in {
-      val snapshottedVersion = finalVersion.toSnapshot()
+    "return the snapshot version of a release version." in {
+      val subject = finalVersion.toSnapshot()
 
-      snapshottedVersion.toString should equal(snapshotVersion)
+      subject.toString should equal(snapshotVersion)
     }
   }
 
