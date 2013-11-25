@@ -6,15 +6,43 @@ import sbt.Keys._
 object Play20Plugin extends Plugin {
 
   lazy val plug = Seq(
-    productionConfigFile <<= (baseDirectory) { (baseDir) => Some(baseDir / "conf" / "prod.conf") },
-    stageConfigFile <<= (baseDirectory) { (baseDir) => Some(baseDir / "conf" / "stage.conf") },
+    productionConfigFile <<= baseDirectory { (baseDir) => Some(baseDir / "conf" / "prod.conf") },
+    stageConfigFile <<= baseDirectory { (baseDir) => Some(baseDir / "conf" / "stage.conf") },
     startScriptName := "start",
     startScriptJavaCommand := "java",
     startScriptJavaOptions := None,
     appInfoPackage := "controllers",
-    dist <<= distTask,
-    distStage <<= distStageTask,
-    distCustom <<= distCustomTask,
+    /* playPackageEverything has been removed in 2.2.x series of the play sbt-plugin so its redefined here */
+    playPackageEverything <<= (state, thisProjectRef, crossTarget) map { (s, r, crossTarget) =>
+      play.Project.inAllDependencies(r, (packageBin in Compile).task, Project structure s).join
+      Seq[File]()
+    },
+    /* play-dist has been removed in the 2.2.x series of the play sbt-plugin so its redefined here */
+    distDirectory <<= baseDirectory(_ / "dist"),
+    dist := {
+      distribution(distDirectory.value, baseDirectory.value, playPackageEverything.value,
+        (dependencyClasspath in Runtime).value, target.value, productionConfigFile.value, startScriptName.value,
+        startScriptJavaCommand.value, startScriptJavaOptions.value, normalizedName.value, version.value,
+        name.value, state.value)
+    },
+    distStage := {
+      distribution(distDirectory.value, baseDirectory.value, playPackageEverything.value,
+        (dependencyClasspath in Runtime).value, target.value, stageConfigFile.value, startScriptName.value,
+        startScriptJavaCommand.value, startScriptJavaOptions.value, normalizedName.value, version.value,
+        name.value, state.value)
+    },
+    distCustom := {
+      val args: Seq[String] = Def.spaceDelimited().parsed
+      val customConfig = args.headOption.map(fn => file(fn))
+
+      customConfig match {
+        case Some(_) => distribution(distDirectory.value, baseDirectory.value, playPackageEverything.value,
+          (dependencyClasspath in Runtime).value, target.value, customConfig, startScriptName.value,
+          startScriptJavaCommand.value, startScriptJavaOptions.value, normalizedName.value, version.value,
+          name.value, state.value)
+        case None => sys.error("No configuration file specified")
+      }
+    },
     sourceGenerators in Compile <+= (sourceManaged in Compile, name, version, organizationName, appInfoPackage) map { (outDir, appName, appVersion, orgName, appInfoPkg) =>
       writeVersion(outDir, appName, appVersion, orgName, appInfoPkg)
     }
@@ -31,26 +59,6 @@ object Play20Plugin extends Plugin {
   val dist = TaskKey[File]("dist", "Build the standalone production application package")
   val distStage = TaskKey[File]("dist-stage", "Build the standalone staging application package")
   val distCustom = InputKey[File]("dist-custom", "Build the standalone application package with custom configuration file")
-  val distTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, productionConfigFile, startScriptName, startScriptJavaCommand, startScriptJavaOptions, normalizedName, version, name, state).map {
-    (distDir, root, packaged, dependencies, target, productionConfig, startScript, javaCommand, javaOpts, id, version, name, stream) =>
-      distribution(distDir, root, packaged, dependencies, target, productionConfig, startScript, javaCommand, javaOpts, id, version, name, stream)
-  }
-
-  val distStageTask = (distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, stageConfigFile, startScriptName, startScriptJavaCommand, startScriptJavaOptions, normalizedName, version, name, state).map {
-    (distDir, root, packaged, dependencies, target, stageConfig, startScript, javaCommand, javaOpts, id, version, name, stream) =>
-      distribution(distDir, root, packaged, dependencies, target, stageConfig, startScript, javaCommand, javaOpts, id, version, name, stream)
-  }
-
-  val distCustomTask = inputTask { argsTask =>
-    (argsTask, distDirectory, baseDirectory, playPackageEverything, dependencyClasspath in Runtime, target, startScriptName, startScriptJavaCommand, startScriptJavaOptions, normalizedName, version, name, state).map {
-      (args, distDir, root, packaged, dependencies, target, startScript, javaCommand, javaOpts, id, version, name, stream) =>
-        val customConfig = args.headOption.map(fn => file(fn))
-        customConfig match {
-          case Some(_) => distribution(distDir, root, packaged, dependencies, target, customConfig, startScript, javaCommand, javaOpts, id, version, name, stream)
-          case None => sys.error("No configuration file specified")
-        }
-    }
-  }
 
   def distribution(distDir: File, root: File,
                    packaged: Seq[File], dependencies: Id[Keys.Classpath],
@@ -110,12 +118,12 @@ exec """ + javaCommand + """ $* -cp $classpath """ + javaOptions.map(opts => opt
 
   def getDependencyToZipLocationMappings(dependencies:Id[Keys.Classpath]) : Seq[(File, String)] = dependencies.filter(_.data.ext == "jar").map { dependency =>
     val filename = for {
-      module <- dependency.metadata.get(AttributeKey[ModuleID]("module-id"))
-      artifact <- dependency.metadata.get(AttributeKey[Artifact]("artifact"))
+      module <- dependency.get(AttributeKey[ModuleID]("module-id"))
+      artifact <- dependency.get(AttributeKey[Artifact]("artifact"))
     } yield {
       module.organization + "." + module.name + "-" + Option(artifact.name.replace(module.name, "")).filterNot(_.isEmpty).map(_ + "-").getOrElse("") + module.revision + ".jar"
     }
-    val path = ("lib/" + filename.getOrElse(dependency.data.getName))
+    val path = "lib/" + filename.getOrElse(dependency.data.getName)
     dependency.data -> path
   }
 

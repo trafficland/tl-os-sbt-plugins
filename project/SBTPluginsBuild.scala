@@ -4,21 +4,21 @@ import trafficland.opensource.sbt.plugins._
 
 object SBTPluginsBuild extends Build {
 
+  val pluginVersion = "0.13.0-SNAPSHOT".toReleaseFormat()
+
   lazy val root = Project(id = "sbt-plugins", base = file("."),
-    settings = StandardPluginSet.plugs ++
-    Seq(
+    settings = StandardPluginSet.plugs ++ LibraryDependencies.playPlugin)
+    .settings(
       isApp := false,
       name := "sbt-plugins",
       organization := "com.trafficland",
       organizationName := "TrafficLand, Inc.",
       sbtPlugin := true,
-      version       := "0.8.1-SNAPSHOT".toReleaseFormat,
-      scalaVersion := "2.9.2",
+      version       := pluginVersion,
+      scalaVersion := "2.10.3",
       scalacOptions := Seq("-deprecation", "-encoding", "utf8"),
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
-      libraryDependencies ++= Seq(
-        "org.scalatest" %% "scalatest" % "1.8" % "test"
-      ),
+      libraryDependencies   ++= LibraryDependencies.toSeq,
       publishTo <<= (version) { version: String =>
         val scalasbt = "http://repo.scala-sbt.org/scalasbt/"
         val (name, url) = version.isSnapshot match {
@@ -37,7 +37,6 @@ object SBTPluginsBuild extends Build {
         result
       }
     )
-  )
 
   def writeReadme(version:String, stream:TaskStreams) {
     stream.log.info("Starting to write README.md.")

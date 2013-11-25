@@ -4,8 +4,15 @@ package trafficland.opensource.sbt.plugins.git
 import sbt._
 import Keys._
 import trafficland.opensource.sbt.plugins._
+import sbt.complete.Parser
+import scala.language.postfixOps
 
 object GitPlugin extends Plugin {
+
+  val commentParser: Parser[String] = {
+    import complete.DefaultParsers._
+    any.* map (_.mkString.trim.stripPrefix("\"").stripSuffix("\""))
+  }
 
   lazy val plug = Seq(
 
@@ -29,7 +36,11 @@ object GitPlugin extends Plugin {
     },
 
     gitIsCleanWorkingTree <<= (gitStatus, streams) map  { (status, stream) =>
-      status.contains("nothing to commit, working directory clean") match {
+      def isClean =
+        status.contains("nothing to commit, working directory clean") ||
+        status.contains("nothing to commit (working directory clean)")
+
+      isClean match {
         case true => {
           stream.log.info("Working tree is clean.")
           true
@@ -95,14 +106,12 @@ object GitPlugin extends Plugin {
       runGitCommit(releaseMessage)
     },
 
-    gitCommit <<= inputTask { argTask =>
-      (argTask, streams) map { (args, stream) =>
-        if (args.isEmpty || args.length > 1)  throw InvalidCommitMessageException()
+    gitCommit := {
+      val commentArg = commentParser.parsed
+      if (commentArg.isEmpty) throw InvalidCommitMessageException()
 
-        val commitMessage = args(0)
-        stream.log.info("Creating commit with message '%s'".format(commitMessage))
-        runGitCommit(commitMessage)
-      }
+      streams.value.log.info(s"""Creating commit with message "$commentArg".""")
+      runGitCommit(commentArg)
     },
 
     gitPushOrigin <<= streams map { stream =>
@@ -131,6 +140,16 @@ object GitPlugin extends Plugin {
     gitMergeDevelop <<= streams map { stream =>
       stream.log.info("Merging develop into master.")
       ("git merge develop").run(false).exitValue
+    },
+
+    gitHeadCommitSha <<= gitIsRepository map { (isRepo) => ifRepo(isRepo) { headCommitSha } },
+
+    gitLastCommitsCount := 10,
+
+    gitLastCommits <<= (gitIsRepository, gitLastCommitsCount) map { (isRepo, count) =>
+      ifRepo(isRepo) {
+        (s"git log --oneline --decorate --max-count=$count" !!).split("\n")
+      }
     }
   )
 
@@ -225,11 +244,28 @@ object GitPlugin extends Plugin {
     "Merge the develop branch into the current branch."
   )
 
+  val gitHeadCommitSha = TaskKey[Option[String]](
+    "git-head-commit-sha",
+    "Prints the HEAD commit SHA."
+  )
+
+  val gitLastCommitsCount = SettingKey[Int](
+    "git-last-commits-count",
+    "the number of commits to show with git-last-commits"
+  )
+
+  val gitLastCommits = TaskKey[Option[Seq[String]]](
+    "git-last-commits",
+    "the latest commits to the project"
+  )
+
   def runGitCommit(commitMessage:String) : Int = {
-    val pb = ("git add ." #&& Seq("git", "commit", "-m", "'%s'".format(commitMessage)))
+    val pb = ("git add -A ." #&& Seq("git", "commit", "-m", "'%s'".format(commitMessage)))
     val proc = pb.run(false)
     proc.exitValue
   }
+
+  def headCommitSha: String = Process("git rev-parse HEAD").lines.head
 
   def ifRepo[T](isRepo: Boolean)(f: => T): Option[T] = {
     if (isRepo) {
