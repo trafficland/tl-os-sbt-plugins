@@ -1,4 +1,4 @@
-package trafficland.opensource.sbt.plugins.buildinfo
+package trafficland.opensource.sbt.plugins.generators
 
 import sbt._
 import Keys._

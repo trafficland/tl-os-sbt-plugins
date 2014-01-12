@@ -46,5 +46,26 @@ object SourceGenerator {
   
   def createPackageApplicationNamePath(organization: String, normalizedName: String): File =
     file(organization.replace('.', Path.sep)) / sanitizeName(normalizedName)
-  
+
+  def fromResourceTemplate(rootResourceFileName: String)
+                          (outputFile: File)
+                          (modifications: Seq[String => String]): Seq[File] = {
+    outputFile.getParentFile.mkdirs()
+
+    @tailrec
+    def substitute(remainingModifications: Seq[String => String], accumulator: String): String = {
+      remainingModifications match {
+        case Nil => accumulator
+        case head :: tail => substitute(tail, head(accumulator))
+      }
+    }
+
+    val templateStream = getClass.getResourceAsStream(s"/$rootResourceFileName")
+    val template = Source.fromInputStream(templateStream).getLines().mkString("\n")
+    val modifiedTemplate = substitute(modifications, template)
+
+    IO.write(outputFile, modifiedTemplate)
+
+    Seq(outputFile)
+  }
 }

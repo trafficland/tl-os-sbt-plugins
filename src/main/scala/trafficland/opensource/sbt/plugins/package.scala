@@ -2,6 +2,7 @@ package trafficland.opensource.sbt
 
 import scala.language.implicitConversions
 import plugins.versionmanagement.SemanticVersion
+import trafficland.opensource.sbt.plugins.generators.AppInfoPlugin
 
 package object plugins {
 
@@ -14,6 +15,6 @@ package object plugins {
   val ReleaseManagement = releasemanagement.ReleaseManagementPlugin
   val ScalaConfiguration = scalaconfiguration.ScalaConfigurationPlugin
   val VersionManagement = versionmanagement.VersionManagementPlugin
-  val AppInfo = appinfo.AppInfoPlugin
+  val AppInfo = AppInfoPlugin
 
 }

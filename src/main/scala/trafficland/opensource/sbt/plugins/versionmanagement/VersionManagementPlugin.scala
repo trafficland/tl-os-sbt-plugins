@@ -69,7 +69,7 @@ object VersionManagementPlugin extends Plugin {
 
   protected def changeVersion(state:State, changeRequest:VersionChangeRequest) : State = {
     val extractedState = Project.extract(state)
-    val buildBaseDirectory = extractedState.get(Keys.baseDirectory)
+    val buildBaseDirectory = extractedState.get(sbt.Keys.baseDirectory)
     val versionRegexes = extractedState.get(VersionManagementPlugin.versionSettingRegexes)
 
     state.log.info("Original version: %s".format(changeRequest.originalVersion.toString))
@@ -123,7 +123,7 @@ object VersionManagementPlugin extends Plugin {
 
     lazy val originalVersion : SemanticVersion = {
       val extractedState = Project.extract(state)
-      extractedState.get(Keys.version)
+      extractedState.get(sbt.Keys.version)
     }
 
     val newVersion : SemanticVersion

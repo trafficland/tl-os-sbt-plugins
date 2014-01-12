@@ -6,6 +6,8 @@ import scalaconfiguration.ScalaConfigurationPlugin
 import versionmanagement.VersionManagementPlugin
 import trafficland.opensource.sbt.plugins.git.GitPlugin
 import trafficland.opensource.sbt.plugins.packagemanagement.PackageManagementPlugin
+import trafficland.opensource.sbt.plugins.rpm.CentOSRPMPlugin
+import trafficland.opensource.sbt.plugins.distribute.DistributePlugin
 
 object StandardPluginSet extends Plugin {
 
@@ -14,6 +16,8 @@ object StandardPluginSet extends Plugin {
     PackageManagementPlugin.plug ++
     ReleaseManagementPlugin.plug ++
     ScalaConfigurationPlugin.plug ++
-    VersionManagementPlugin.plug
-
+    VersionManagementPlugin.plug ++
+    generators.plugs ++
+    CentOSRPMPlugin.plug ++
+    DistributePlugin.plug
 }

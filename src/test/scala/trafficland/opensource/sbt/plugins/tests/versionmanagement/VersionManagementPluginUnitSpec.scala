@@ -1,10 +1,10 @@
 package trafficland.opensource.sbt.plugins.tests.versionmanagement
 
-import org.scalatest.WordSpec
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.matchers.ShouldMatchers
 import trafficland.opensource.sbt.plugins.versionmanagement.{SemanticVersion, VersionManagementPlugin}
 
-class VersionManagementPluginUnitSpec extends WordSpec with ShouldMatchers {
+class VersionManagementPluginUnitSpec extends WordSpec with Matchers {
 
   protected val snapshotVersionOfInterest = "1.0.0-SNAPSHOT"
   protected val snapshotReleaseVersionOfInterest = "1.0.0-20130611-133756"

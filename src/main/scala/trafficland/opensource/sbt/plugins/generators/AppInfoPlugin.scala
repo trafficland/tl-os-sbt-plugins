@@ -1,8 +1,8 @@
-package trafficland.opensource.sbt.plugins.appinfo
+package trafficland.opensource.sbt.plugins.generators
 
 import sbt._
 import sbt.Keys._
-import java.io.{FileWriter, File}
+import java.io.FileWriter
 import java.util.Properties
 import trafficland.opensource.sbt.plugins.utils.SourceGenerator._
 
@@ -28,9 +28,10 @@ object AppInfoPlugin extends Plugin {
 
   lazy val plug = Seq(
     appInfoPropertiesFile <<= (resourceManaged in Compile) { (d) => new File(d, appInfoPropertiesFileName) },
-    appInfoPropertiesWrite <<= (appInfoPropertiesFile, name, version, organizationName) map {
-      (targetFile, appName, appVersion, orgName) =>
-      writeAppInfoProperties(targetFile, appName, appVersion, orgName)
+    appInfoPropertiesWrite <<= (streams, appInfoPropertiesFile, name, version, organizationName) map {
+      (out, targetFile, appName, appVersion, orgName) =>
+        out.log.info(s"Writing app info properties to $targetFile")
+        writeAppInfoProperties(targetFile, appName, appVersion, orgName)
     },
     resourceGenerators in Compile <+= appInfoPropertiesWrite,
     generateAppInfoClass <<= (streams, normalizedName, version, organization, baseDirectory, appInfoPropertiesFile) map { (out, name, v, org, dir, file) =>
@@ -58,5 +59,4 @@ object AppInfoPlugin extends Plugin {
 
     Seq(targetFile)
   }
-
 }
