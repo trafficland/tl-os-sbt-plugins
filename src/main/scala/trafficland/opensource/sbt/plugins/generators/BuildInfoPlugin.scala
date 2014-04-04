@@ -15,7 +15,11 @@ import trafficland.opensource.sbt.plugins.utils.SourceGenerator._
 object BuildInfoPlugin extends Plugin {
   import GitPlugin._
 
-  val buildInfoPropertiesFileName = "buildinfo.properties"
+  val buildInfoPropertiesFileName = SettingKey[String](
+    "build-info-properties-file-name",
+    "filename used to build the buildInfoPropertiesFile setting"
+  )
+
   val buildInfoClassFileName = "BuildInfo.scala"
 
   val buildInfoPropertiesWrite = TaskKey[Seq[File]](
@@ -34,7 +38,8 @@ object BuildInfoPlugin extends Plugin {
   )
 
   lazy val plug = Seq(
-    buildInfoPropertiesFile <<= (resourceManaged in Compile) { (d) => new File(d, buildInfoPropertiesFileName) },
+    buildInfoPropertiesFileName <<= name { n => s"$n-buildinfo.properties" },
+    buildInfoPropertiesFile <<= (resourceManaged in Compile, buildInfoPropertiesFileName) { (d, fn) => new File(d, fn) },
     buildInfoPropertiesWrite <<= (
       streams,
       buildInfoPropertiesFile,

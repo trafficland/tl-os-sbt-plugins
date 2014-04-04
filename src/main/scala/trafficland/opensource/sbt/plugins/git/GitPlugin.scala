@@ -19,11 +19,11 @@ object GitPlugin extends Plugin {
     gitIsRepository <<= (streams) map { (stream) =>
       ("git status" !!).trim match {
         case "fatal: Not a git repository (or any of the parent directories): .git" => {
-          stream.log.info("This project is not part of a git repository.")
+          stream.log.debug("This project is not part of a git repository.")
           false
         }
         case _ => {
-          stream.log.info("This project is part of a git repository.")
+          stream.log.debug("This project is part of a git repository.")
           true
         }
       }
@@ -55,7 +55,7 @@ object GitPlugin extends Plugin {
     gitBranchName <<= (gitIsRepository, streams) map { (isRepo, stream) =>
       ifRepo(isRepo) {
         val branchName = ("git symbolic-ref -q HEAD" #|| "git rev-parse HEAD" !!).trim
-        stream.log.info(branchName)
+        stream.log.debug(branchName)
         branchName
       }
     },

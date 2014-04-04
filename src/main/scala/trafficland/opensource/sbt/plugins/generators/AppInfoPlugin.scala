@@ -8,7 +8,10 @@ import trafficland.opensource.sbt.plugins.utils.SourceGenerator._
 
 object AppInfoPlugin extends Plugin {
 
-  val appInfoPropertiesFileName = "appinfo.properties"
+  val appInfoPropertiesFileName = SettingKey[String](
+    "app-info-properties-file-name",
+    "filename used to build the appInfoPropertiesFile setting"
+  )
   val appInfoClassFileName = "AppInfo.scala"
 
   val appInfoPropertiesWrite = TaskKey[Seq[File]](
@@ -27,7 +30,8 @@ object AppInfoPlugin extends Plugin {
   )
 
   lazy val plug = Seq(
-    appInfoPropertiesFile <<= (resourceManaged in Compile) { (d) => new File(d, appInfoPropertiesFileName) },
+    appInfoPropertiesFileName <<= name { n => s"$n-appinfo.properties" },
+    appInfoPropertiesFile <<= (resourceManaged in Compile, appInfoPropertiesFileName) { (d, fn) => new File(d, fn) },
     appInfoPropertiesWrite <<= (streams, appInfoPropertiesFile, name, version, organizationName) map {
       (out, targetFile, appName, appVersion, orgName) =>
         out.log.info(s"Writing app info properties to $targetFile")
