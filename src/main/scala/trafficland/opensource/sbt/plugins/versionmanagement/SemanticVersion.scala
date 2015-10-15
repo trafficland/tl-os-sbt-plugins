@@ -30,6 +30,9 @@ object SemanticVersion extends Snapshotable {
   }
 
   def toVersion(originalVersion:String) : SemanticVersion = {
+    require(originalVersion.length > 0, "version string must be greater than 0 characters in length")
+    require(originalVersion.matches("^(.+)\\.(.+)\\.(.+)"), s"""version string must contain the pattern ^(.+)\\.(.+)\\.(.+) (version string is: "$originalVersion")""")
+
     isSnapshot(originalVersion) match {
       case true => {
         originalVersion.split("\\.") match {

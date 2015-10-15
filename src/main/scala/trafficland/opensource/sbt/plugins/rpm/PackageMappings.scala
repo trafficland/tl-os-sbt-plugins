@@ -2,10 +2,9 @@ package trafficland.opensource.sbt.plugins.rpm
 
 import sbt._
 import scala.collection._
-import com.typesafe.sbt.SbtNativePackager._
 import trafficland.opensource.sbt.plugins.utils._
 import com.typesafe.sbt.packager.Keys._
-import com.typesafe.sbt.packager.linux.LinuxPackageMapping
+import com.typesafe.sbt.packager.linux.{LinuxMappingDSL, LinuxPackageMapping}
 
 object Permissions {
   val normal = "0644"
@@ -22,7 +21,7 @@ trait NoSpecialUserGroupMappings extends FileUserGroupMappings {
   }
 }
 
-trait FileAndDirectoryMappings extends FileUserGroupMappings {
+trait FileAndDirectoryMappings extends FileUserGroupMappings with LinuxMappingDSL {
 
   import Permissions._
 
@@ -75,7 +74,7 @@ abstract case class DerivePackageMappings(name: String, rpmVendor: String, baseL
   def apply() : Seq[com.typesafe.sbt.packager.linux.LinuxPackageMapping] = {
     import Permissions._
 
-    var pkgMapping = List(
+    var pkgMappings = List(
       packageDirectory(vendorDir),
       packageDirectory(installationDir),
       /* do not explicitly own /var/log/$vendor/$name because that is likely a mount point in AWS */
@@ -83,23 +82,39 @@ abstract case class DerivePackageMappings(name: String, rpmVendor: String, baseL
     ) ++ additionalPackageMappings
 
     if (fileExists(baseLocalDir / "scripts/init.sh")) {
-      pkgMapping ++= Seq(packageMapping(baseLocalDir / "scripts/init.sh" -> s"/etc/rc.d/init.d/${installedInitScriptName}") withUser "root" withGroup "root" withPerms executable)
+      pkgMappings ++= Seq(packageMapping(baseLocalDir / "scripts/init.sh" -> s"/etc/rc.d/init.d/${installedInitScriptName}") withUser "root" withGroup "root" withPerms executable)
     }
 
     val extracted = Project.extract(state)
     extracted.runTask(dist, state) match {
       case (_, zip) =>
         val zipFileMappings = processZipArchive(installationDir, name, zip)
-        pkgMapping ++= zipFileMappings
+        pkgMappings ++= zipFileMappings
     }
 
+    val pkgMappingsWithoutDS_Store = pkgMappings map { linuxPackage =>
+      val filtered = linuxPackage.mappings filter {
+        case (file, name) => {
+          file.name != ".DS_Store"
+        }
+      }
+
+      linuxPackage.copy(
+        mappings = filtered,
+        fileData = linuxPackage.fileData
+      )
+    } filter {
+      linuxPackage => linuxPackage.mappings.nonEmpty
+    }
+
+
     (for {
-      lpm <- pkgMapping
+      lpm <- pkgMappingsWithoutDS_Store
       mappings <- lpm.mappings
     } yield mappings._2).sorted.foreach {
       p => state.log.info("Added to RPM spec: %s".format(p))
     }
-    pkgMapping
+    pkgMappingsWithoutDS_Store
   }
 }
 

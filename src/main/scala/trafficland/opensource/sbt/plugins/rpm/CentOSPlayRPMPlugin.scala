@@ -18,13 +18,13 @@ object CentOSPlayRPMPlugin extends Plugin {
                            | fi""".stripMargin),
 
     linuxPackageMappings <<= (name in Rpm, rpmVendor in Rpm, baseDirectory, vendorDirectory, installationDirectory, linuxUserAndGroup, additionalPackageMappings, installedInitScriptName, state, wwwUserAndGroup)
-      map { (name, vendor, baseDir, vendorDir, installDir, uag, addlMappings, script, state, wwwUAG) =>
-      val f = new DerivePackageMappings(name, vendor, baseDir, vendorDir, installDir, uag._1, uag._2, addlMappings.toList, script, state) {
-        override def mapToUserGroup = {
-          case s if s.contains("public/") => (wwwUAG._1, wwwUAG._2)
-        }
-      }
-      f.apply()
+     map { (name, vendor, baseDir, vendorDir, installDir, uag, addlMappings, script, state, wwwUAG) =>
+     val f = new DerivePackageMappings(name, vendor, baseDir, vendorDir, installDir, uag._1, uag._2, addlMappings.toList, script, state) {
+       override def mapToUserGroup = {
+         case s if s.contains("public/") => (wwwUAG._1, wwwUAG._2)
+       }
+     }
+     f.apply()
     }
   )
 }

@@ -75,7 +75,7 @@ object DistributePlugin extends Plugin {
     var common = coalesce(
       (root / "README") -> (packageDirectory + "/README"),
       (root / "README.md") -> (packageDirectory + "/README.md"),
-      configFile -> (packageDirectory + s"/conf/${configFile.getName}"),
+      configFile -> (packageDirectory + s`"/conf/${configFile.getName}"),
       applicationConf -> (packageDirectory + s"/conf/$applicationConfigFileName")
     )
 
