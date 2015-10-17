@@ -18,14 +18,13 @@ object NginxConfPlugin extends sbt.Plugin with ConfigurationDirectory with FileG
   lazy val plug = DefaultConfigurationDirectory.projectSettings ++ Seq(
     nginxConfTargetFile <<= confDirectory(_ / "nginx.conf"),
     generateNginxConf <<= (streams, normalizedName, installationDirectory, nginxConfTargetFile)
-      map { (out, name, installationDir, tf) =>
-      val modifications = normalizedNameModification(name) ++ installationDirectoryModification(installationDir)
-      generate(out, "nginx.conf.template", modifications, tf)
+     map { (out, name, installationDir, tf) =>
+     val modifications = normalizedNameModification(name) ++ installationDirectoryModification(installationDir)
+     generate(out, "nginx.conf.template", modifications, tf)
     }
   )
 
   private def installationDirectoryModification(installationDir: String): Seq[String => String] = {
     Seq[String => String](_.replace("{INSTALLATION_DIRECTORY}", installationDir))
   }
-
 }

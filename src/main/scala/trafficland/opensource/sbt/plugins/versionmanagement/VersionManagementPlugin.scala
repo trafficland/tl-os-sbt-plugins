@@ -26,43 +26,43 @@ object VersionManagementPlugin extends Plugin {
   val versionSettingRegexes = SettingKey[Seq[String]]("version-setting-regexes", "a list of regexes to use to replace versions")
 
   def versionBumpMajor = Command.command(
-    "version-bump-major",
+    "versionBumpMajor",
     "Bump the major version number (for example, 2.1.4 -> 3.0.0)",
     ""
   ) { state => changeVersion(state, BumpMajorChangeRequest(state)) }
 
   def versionBumpMinor = Command.command(
-    "version-bump-minor",
+    "versionBumpMinor",
     "Bump the minor version number (for example, 2.1.4 -> 2.2.0)",
     ""
   ) { state => changeVersion(state, BumpMinorChangeRequest(state)) }
 
   def versionBumpPatch = Command.command(
-    "version-bump-patch",
+    "versionBumpPatch",
     "Bump the patch version number (for example, 2.1.4 -> 2.1.5)",
     ""
   ) { state => changeVersion(state, BumpPatchChangeRequest(state)) }
 
   def versionToSnapshot = Command.command(
-    "version-to-snapshot",
+    "versionToSnapshot",
     "Convert the current version into a snapshot release (for example, 2.1.4 -> 2.1.4-SNAPSHOT)",
     ""
   ) { state => changeVersion(state, ToSnapshotChangeRequest(state)) }
 
   def versionToFinal = Command.command(
-    "version-to-final",
+    "versionToFinal",
     "Convert the current version into a final release version (for example, 2.1.4-SNAPSHOT -> 2.1.4)",
     ""
   ) { state => changeVersion(state, ToFinalChangeRequest(state)) }
 
   def versionSet = Command.single(
-    "version-set",
+    "versionSet",
     ("version-set version", "Manually set the current version"),
     ""
   ) { (state: State, versionToSet: String) => changeVersion(state, SetVersionChangeRequest(state, versionToSet)) }
 
   def versionWriteSnapshotRelease = Command.command(
-    "version-write-snapshot-release",
+    "versionWriteSnapshotRelease",
     "Writes the release format of the snapshot version.  This is used to preserve the actual snapshot version in a release commit.",
     ""
   ) { state => changeVersion(state, SnapshotReleaseChangeRequest(state)) }

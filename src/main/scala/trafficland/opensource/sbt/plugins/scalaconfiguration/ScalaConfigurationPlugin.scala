@@ -6,7 +6,7 @@ import sbt.Keys._
 object ScalaConfigurationPlugin extends Plugin {
 
   lazy val plug = Seq(
-    scalaVersion  := "2.10.3",
+    scalaVersion  := "2.10.4",
     scalacOptions := Seq("-deprecation", "-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions")
   )
 }
