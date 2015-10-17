@@ -30,7 +30,7 @@ object Build extends sbt.Build {
     .settings(DistributePlugin.plug: _*)
     .settings(LibraryDependencies.playPlugin: _*)
     .settings(
-      isApp                 := false,
+      isApp                 := true,
       version               := pluginVersion,
       organization          := "com.trafficland",
       organizationName      := "Trafficland, Inc.",
