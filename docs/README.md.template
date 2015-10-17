@@ -5,26 +5,30 @@ This project is largely based on the work done by Robey Pointer
 which can be found at https://github.com/twitter/sbt-package-dist.  Robey, if you find this repository, thank you for
 your work, inspiration and for making it easier to figure out how to bend SBT to our will.
 
-sbt-plugins is a set of plugins for SBT 0.12.x which unites processes and tasks that TrafficLand
+sbt-plugins is a set of plugins for SBT 0.13.x which unites processes and tasks that TrafficLand, Inc. (https://github.com/trafficland/)
 uses daily for release and version management.  We thought
 they might be useful to others so we moved the parts that are specific to TrafficLand to a private repository
-and open sourced the rest.  
+and open sourced the rest.
 
-We hope this project proves useful to others.
+As of mid 2015 the developers at TrafficLand (of which I am one) decided not to maintain the open source version of the plugins.
+But I (https://github.com/ereichert/) decided to continue maintaining them as I use them in projects outside my job at TrafficLand, Inc.
+
+I hope this project proves useful to others.
 
 General Usage
 =============
 
 ## Getting sbt-plugins
 
-See http://www.scala-sbt.org/0.12.1/docs/Extending/Plugins for information on adding plugins.
+See http://www.scala-sbt.org/ for information on adding plugins.
 
-The plugin is currently hosted by the Scala SBT repository (http://repo.scala-sbt.org/).
+The production artifacts used to be available at http://repo.scala-sbt.org/scalasbt/repo but that repo was shut down and,
+ since I have no idea if anyone other than me is using this project, I didn't go through the hassle of moving to the new repo.
 
-Add the following to your project/plugins.sbt file:
+So, to use these plugins you'll need to clone the source and publishLocal.
 
-    resolvers += Resolver.url("Artifactory Online", url("http://repo.scala-sbt.org/scalasbt/repo"))(Resolver.ivyStylePatterns)
-    
+Then add the following to your project/plugins.sbt file:
+
     addSbtPlugin("com.trafficland" % "sbt-plugins" % "#{VERSION}")
 
 ## Mixing in the StandardPluginSet
@@ -103,7 +107,7 @@ Reference
 ## Plugins
 
 The following documentation includes intricacies specific to these plugins.  For more details about SBT see their
-documentation (http://www.scala-sbt.org/0.12.1/docs/home.html) or **RTFC**.
+documentation (http://www.scala-sbt.org/) or **RTFC**.
 
 GitPlugin
 =========

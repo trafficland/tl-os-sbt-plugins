@@ -8,16 +8,17 @@ import trafficland.opensource.sbt.plugins.git.GitPlugin
 import trafficland.opensource.sbt.plugins.packagemanagement.PackageManagementPlugin
 import trafficland.opensource.sbt.plugins.rpm.CentOSRPMPlugin
 import trafficland.opensource.sbt.plugins.distribute.DistributePlugin
+import trafficland.opensource.sbt.plugins.generators.GeneratorsPlugin
 
 object StandardPluginSet extends Plugin {
 
-  lazy val plugs = Project.defaultSettings ++
+  lazy val plugs = Defaults.coreDefaultSettings ++
     GitPlugin.plug ++
     PackageManagementPlugin.plug ++
     ReleaseManagementPlugin.plug ++
     ScalaConfigurationPlugin.plug ++
     VersionManagementPlugin.plug ++
-    generators.plugs ++
+    GeneratorsPlugin.plugs ++
     CentOSRPMPlugin.plug ++
     DistributePlugin.plug
 }

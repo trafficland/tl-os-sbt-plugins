@@ -30,16 +30,16 @@ object CentOSRPMPlugin extends Plugin {
     scriptsDirectory <<= baseDirectory apply { bd => bd / "scripts" },
     initShTargetFile <<= scriptsDirectory apply { sd => sd / "init.sh" },
     generateInitScript <<= (streams, initShTargetFile, name, installationDirectory, linuxUserAndGroup) map { (out, tf, name, installDir, uag) =>
-      tf.getParentFile.mkdirs()
-      val generated = fromResourceTemplate("init.sh.template")(tf)(
-        Seq[String => String](
-          _.replace("{NAME}", name),
-          _.replace("{INSTALLATION_DIRECTORY}", installDir),
-          _.replace("{LINUX_USER}", uag._1)
-        )
-      )
-      generated.foreach(f => out.log.info(s"Generated $f"))
-      generated
+     tf.getParentFile.mkdirs()
+     val generated = fromResourceTemplate("init.sh.template")(tf)(
+       Seq[String => String](
+         _.replace("{NAME}", name),
+         _.replace("{INSTALLATION_DIRECTORY}", installDir),
+         _.replace("{LINUX_USER}", uag._1)
+       )
+     )
+     generated.foreach(f => out.log.info(s"Generated $f"))
+     generated
     }
   )
 }

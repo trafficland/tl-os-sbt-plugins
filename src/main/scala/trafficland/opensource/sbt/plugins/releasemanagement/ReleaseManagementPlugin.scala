@@ -51,13 +51,13 @@ object ReleaseManagementPlugin extends Plugin {
     "If isApp is set to true (default) then the release will not be published.")
 
   def releaseSnapshot = Command.command(
-    "release-snapshot",
+    "releaseSnapshot",
     "Tag and release a snapshot version of an app or lib.",
     ""
   ) (release(SnapshotRelease()))
 
   def releaseFinal = Command.command(
-    "release-final",
+    "releaseFinal",
     "Tag and release a final version of an app or lib by removing SNAPSHOT from the version and bumping the patch value.",
     ""
   ) (release(FinalRelease()))
