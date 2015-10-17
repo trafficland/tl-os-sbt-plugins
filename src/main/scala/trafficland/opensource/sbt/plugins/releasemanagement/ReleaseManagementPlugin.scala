@@ -5,6 +5,7 @@ import Keys._
 import trafficland.opensource.sbt.plugins.git.GitPlugin
 import GitPlugin._
 import trafficland.opensource.sbt.plugins._
+import scala.language.postfixOps
 
 object ReleaseManagementPlugin extends Plugin {
 
@@ -46,7 +47,7 @@ object ReleaseManagementPlugin extends Plugin {
     "checks to see if current source tree and project can be published"
   )
 
-  val isApp = SettingKey[Boolean] ("is-app", "Used by the release commands to determine if the release should be pulished.  " +
+  val isApp = SettingKey[Boolean] ("is-app", "Used by the release commands to determine if the release should be published.  " +
     "If isApp is set to true (default) then the release will not be published.")
 
   def releaseSnapshot = Command.command(
