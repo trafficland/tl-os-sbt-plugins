@@ -1,6 +1,8 @@
 sbt-plugins
 ================
 
+#This project is no longer maintained. Its successor can be found at https://github.com/trafficland/augment-sbt.
+
 This project is largely based on the work done by Robey Pointer
 which can be found at https://github.com/twitter/sbt-package-dist.  Robey, if you find this repository, thank you for
 your work, inspiration and for making it easier to figure out how to bend SBT to our will.

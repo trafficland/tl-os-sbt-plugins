@@ -1,1 +1,3 @@
-java -Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=384M -jar `dirname $0`/sbt-launch.jar "$@"
+#!/usr/bin/env bash
+SBT_OPTS="-Xms512M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled"
+java $SBT_OPTS -jar `dirname $0`/sbt-launch.jar "$@"
